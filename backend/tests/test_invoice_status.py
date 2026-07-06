@@ -19,3 +19,7 @@ def test_status_transitions(client):
                       json={"status": "paid"}).json()["status"] == "paid"
     assert client.put(f"/api/invoices/{iid}/status",
                       json={"status": "bogus"}).status_code == 422
+
+
+def test_status_missing_invoice_404(client):
+    assert client.put("/api/invoices/999999/status", json={"status": "sent"}).status_code == 404

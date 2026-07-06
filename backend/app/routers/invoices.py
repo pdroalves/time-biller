@@ -38,7 +38,7 @@ def get_invoice(invoice_id: int, db: Session = Depends(get_db)):
 def set_status(invoice_id: int, status_value: str = Body(..., embed=True, alias="status"),
                db: Session = Depends(get_db)):
     if status_value not in VALID_STATUSES:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Invalid status")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Invalid status")
     obj = db.get(Invoice, invoice_id)
     if obj is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
