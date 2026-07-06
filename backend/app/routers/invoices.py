@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -8,6 +8,8 @@ from ..schemas import InvoiceCreate, InvoiceRead
 from ..services.invoicing import build_invoice
 
 router = APIRouter(prefix="/api/invoices", tags=["invoices"])
+
+VALID_STATUSES = {"invoiced", "sent", "paid"}
 
 
 @router.post("", response_model=InvoiceRead, status_code=status.HTTP_201_CREATED)
@@ -29,6 +31,20 @@ def get_invoice(invoice_id: int, db: Session = Depends(get_db)):
     obj = db.get(Invoice, invoice_id)
     if obj is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
+    return obj
+
+
+@router.put("/{invoice_id}/status", response_model=InvoiceRead)
+def set_status(invoice_id: int, status_value: str = Body(..., embed=True, alias="status"),
+               db: Session = Depends(get_db)):
+    if status_value not in VALID_STATUSES:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Invalid status")
+    obj = db.get(Invoice, invoice_id)
+    if obj is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
+    obj.status = status_value
+    db.commit()
+    db.refresh(obj)
     return obj
 
 
