@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from . import models  # noqa: F401
 from .db import Base, engine
@@ -29,6 +32,10 @@ def create_app() -> FastAPI:
 
     from .routers import dashboard as dashboard_router
     app.include_router(dashboard_router.router)
+
+    dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+    if dist.exists():
+        app.mount("/", StaticFiles(directory=str(dist), html=True), name="spa")
 
     return app
 
