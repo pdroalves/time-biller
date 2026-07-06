@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><style>
+  body { font-family: sans-serif; font-size: 12px; color: #222; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .row { display: flex; justify-content: space-between; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #ddd; }
+  td.num, th.num { text-align: right; }
+  .total { text-align: right; font-size: 15px; font-weight: bold; margin-top: 12px; }
+  .muted { color: #666; }
+</style></head>
+<body>
+  <div class="row">
+    <div>
+      {% if settings.logo_path %}<img src="{{ settings.logo_path }}" height="48"><br>{% endif %}
+      <strong>{{ inv.business_name }}</strong><br>
+      <span class="muted">{{ inv.business_address }}</span>
+    </div>
+    <div style="text-align:right">
+      <h1>Invoice {{ inv.number }}</h1>
+      <div class="muted">Issued: {{ inv.issue_date.date() }}</div>
+      <div class="muted">Due: {{ inv.due_date.date() }}</div>
+      <div class="muted">Status: {{ inv.status }}</div>
+    </div>
+  </div>
+  <p><strong>Bill to:</strong> {{ inv.client.name }}<br>
+     <span class="muted">{{ inv.client.contact }}</span></p>
+  <table>
+    <thead><tr><th>Date</th><th>Description</th>
+      <th class="num">Hours</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead>
+    <tbody>
+      {% for line in inv.lines %}
+      <tr><td>{{ line.entry_date.date() }}</td><td>{{ line.description }}</td>
+        <td class="num">{{ '%.2f' % line.hours }}</td>
+        <td class="num">{{ inv.currency_symbol }}{{ '%.2f' % line.rate }}</td>
+        <td class="num">{{ inv.currency_symbol }}{{ '%.2f' % line.amount }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="total">Total: {{ inv.currency_symbol }}{{ '%.2f' % inv.subtotal }}</div>
+  {% if inv.notes %}<p class="muted">{{ inv.notes }}</p>{% endif %}
+</body>
+</html>

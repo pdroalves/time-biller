@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..db import get_db
 from ..models import Invoice
+from ..routers.settings import get_settings
 from ..schemas import InvoiceCreate, InvoiceRead
 from ..services.invoicing import build_invoice
+from ..services.pdf import render_invoice_pdf
 
 router = APIRouter(prefix="/api/invoices", tags=["invoices"])
 
@@ -32,6 +34,17 @@ def get_invoice(invoice_id: int, db: Session = Depends(get_db)):
     if obj is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
     return obj
+
+
+@router.get("/{invoice_id}/pdf")
+def invoice_pdf(invoice_id: int, db: Session = Depends(get_db)):
+    obj = db.get(Invoice, invoice_id)
+    if obj is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Invoice not found")
+    pdf = render_invoice_pdf(obj, get_settings(db))
+    return Response(content=pdf, media_type="application/pdf",
+                    headers={"Content-Disposition":
+                             f'attachment; filename="{obj.number}.pdf"'})
 
 
 @router.put("/{invoice_id}/status", response_model=InvoiceRead)
