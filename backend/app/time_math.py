@@ -4,13 +4,19 @@ from datetime import datetime, timezone
 from decimal import ROUND_HALF_UP, Decimal
 
 
+def _naive(dt):
+    return dt.replace(tzinfo=None) if dt is not None and dt.tzinfo is not None else dt
+
+
 def segment_seconds(segments, now: datetime | None = None) -> int:
     if now is None:
         now = datetime.now(timezone.utc)
+    now = _naive(now)
     total = 0
     for seg in segments:
-        end = seg.ended_at if seg.ended_at is not None else now
-        total += int((end - seg.started_at).total_seconds())
+        start = _naive(seg.started_at)
+        end = _naive(seg.ended_at) if seg.ended_at is not None else now
+        total += int((end - start).total_seconds())
     return max(total, 0)
 
 

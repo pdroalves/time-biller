@@ -32,8 +32,6 @@ def _require_unbilled(entry: TimeEntry) -> None:
 def to_read(entry: TimeEntry, now: datetime | None = None) -> dict:
     if now is None:
         now = _now()
-    if now.tzinfo is not None:
-        now = now.replace(tzinfo=None)
     data = TimeEntryRead.model_validate(entry).model_dump()
     data["duration_seconds"] = segment_seconds(entry.segments, now=now)
     return data
