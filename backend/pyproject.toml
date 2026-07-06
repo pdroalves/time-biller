@@ -10,6 +10,7 @@ dependencies = [
   "jinja2>=3.1",
   "weasyprint>=62",
   "python-multipart>=0.0.9",
+  "pywebview>=5.1",
 ]
 
 [project.optional-dependencies]
