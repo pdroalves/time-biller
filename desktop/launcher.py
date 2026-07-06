@@ -38,9 +38,12 @@ def main() -> None:
     if not _wait_for_health():
         print("Server failed to start", file=sys.stderr)
         sys.exit(1)
-    subprocess.Popen([sys.executable, str(ROOT / "desktop" / "tray.py")])
-    webview.create_window("Time-Biller", SERVER_URL, width=1100, height=750)
-    webview.start()
+    tray_proc = subprocess.Popen([sys.executable, str(ROOT / "desktop" / "tray.py")])
+    try:
+        webview.create_window("Time-Biller", SERVER_URL, width=1100, height=750)
+        webview.start()
+    finally:
+        tray_proc.terminate()
 
 
 if __name__ == "__main__":

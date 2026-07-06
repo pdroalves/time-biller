@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import models  # noqa: F401
@@ -35,7 +36,18 @@ def create_app() -> FastAPI:
 
     dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
     if dist.exists():
-        app.mount("/", StaticFiles(directory=str(dist), html=True), name="spa")
+        assets = dist / "assets"
+        if assets.exists():
+            app.mount("/assets", StaticFiles(directory=str(assets)), name="assets")
+
+        @app.get("/{full_path:path}")
+        def spa(full_path: str) -> FileResponse:
+            if full_path.startswith("api/"):
+                raise HTTPException(status_code=404, detail="Not found")
+            candidate = dist / full_path
+            if full_path and candidate.is_file():
+                return FileResponse(str(candidate))
+            return FileResponse(str(dist / "index.html"))
 
     return app
 
