@@ -27,6 +27,9 @@ def create_app() -> FastAPI:
     from .routers import invoices as invoices_router
     app.include_router(invoices_router.router)
 
+    from .routers import dashboard as dashboard_router
+    app.include_router(dashboard_router.router)
+
     return app
 
 
