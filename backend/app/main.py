@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from . import models  # noqa: F401
 from .db import Base, engine
 
 
