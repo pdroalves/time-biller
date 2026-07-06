@@ -16,13 +16,17 @@ def segment_seconds(segments, now: datetime | None = None) -> int:
 
 def round_hours(seconds: int, increment_minutes: int) -> Decimal:
     if increment_minutes <= 0:
-        return (Decimal(seconds) / Decimal(3600)).quantize(Decimal("0.01"))
+        return (Decimal(seconds) / Decimal(3600)).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
     increment_seconds = increment_minutes * 60
     units = (Decimal(seconds) / Decimal(increment_seconds)).quantize(
         Decimal("1"), rounding=ROUND_HALF_UP
     )
     rounded_seconds = units * increment_seconds
-    return (rounded_seconds / Decimal(3600)).quantize(Decimal("0.01"))
+    return (rounded_seconds / Decimal(3600)).quantize(
+        Decimal("0.01"), rounding=ROUND_HALF_UP
+    )
 
 
 def resolve_rate(client_rate: Decimal, project_override: Decimal | None) -> Decimal:

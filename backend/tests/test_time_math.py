@@ -35,6 +35,17 @@ def test_round_hours_half_up():
     assert round_hours(int(7.5 * 60), 15) == Decimal("0.25")
 
 
+def test_round_hours_no_increment_exact():
+    # increment_minutes <= 0 -> exact hours to 2 decimals, half-up on boundary
+    assert round_hours(3600, 0) == Decimal("1.00")
+    assert round_hours(18, 0) == Decimal("0.01")  # 18s = 0.005h -> half-up -> 0.01
+
+
+def test_segment_seconds_negative_clamp():
+    # ended_at before started_at yields 0 (clamped)
+    assert segment_seconds([Seg(_dt(11, 0), _dt(10, 0))]) == 0
+
+
 def test_resolve_rate_override_wins():
     assert resolve_rate(Decimal("100"), Decimal("150")) == Decimal("150")
     assert resolve_rate(Decimal("100"), None) == Decimal("100")
