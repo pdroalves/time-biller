@@ -15,6 +15,9 @@ def create_app() -> FastAPI:
     from .routers import settings as settings_router
     app.include_router(settings_router.router)
 
+    from .routers import clients as clients_router
+    app.include_router(clients_router.router)
+
     return app
 
 
