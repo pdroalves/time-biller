@@ -21,6 +21,9 @@ def create_app() -> FastAPI:
     from .routers import projects as projects_router
     app.include_router(projects_router.router)
 
+    from .routers import time_entries as time_entries_router
+    app.include_router(time_entries_router.router)
+
     return app
 
 
