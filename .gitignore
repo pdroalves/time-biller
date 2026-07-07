@@ -7,3 +7,5 @@ node_modules/
 frontend/dist/
 *.tsbuildinfo
 *.egg-info/
+.superpowers/
+.DS_Store

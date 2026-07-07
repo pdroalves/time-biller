@@ -1,5 +1,7 @@
 services:
   time-biller:
+    build:
+      context: .
     image: time-biller:latest
     container_name: time-biller
     restart: unless-stopped

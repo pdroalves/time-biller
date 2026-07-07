@@ -138,3 +138,8 @@ above, single user, single machine, single currency, no tax handling.
 **Explicitly out of scope for v1:** payment processing, recurring invoices,
 multi-currency, multi-user/teams, and true mobile apps (the desktop window is the
 primary surface, with the tray for quick control).
+
+## License
+
+Licensed under the **GNU General Public License v3.0 or later**. See
+[`LICENSE`](LICENSE) for the full text.
