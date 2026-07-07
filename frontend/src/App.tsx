@@ -1,23 +1,58 @@
 import { NavLink, Outlet } from "react-router-dom";
+import {
+  IconDashboard,
+  IconFolder,
+  IconInvoice,
+  IconList,
+  IconSettings,
+  IconStopwatch,
+  IconTimer,
+  IconUsers,
+} from "./icons";
 
-const links = [["/", "Dashboard"], ["/timer", "Timer"], ["/entries", "Entries"],
-  ["/clients", "Clients"], ["/projects", "Projects"], ["/invoices", "Invoices"],
-  ["/settings", "Settings"]] as const;
+const links = [
+  { to: "/", label: "Dashboard", Icon: IconDashboard, end: true },
+  { to: "/timer", label: "Timer", Icon: IconTimer, end: false },
+  { to: "/entries", label: "Entries", Icon: IconList, end: false },
+  { to: "/clients", label: "Clients", Icon: IconUsers, end: false },
+  { to: "/projects", label: "Projects", Icon: IconFolder, end: false },
+  { to: "/invoices", label: "Invoices", Icon: IconInvoice, end: false },
+  { to: "/settings", label: "Settings", Icon: IconSettings, end: false },
+];
 
 export function App() {
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui" }}>
-      <nav style={{ width: 180, background: "#111827", color: "#fff", padding: 16 }}>
-        <h2 style={{ fontSize: 18 }}>Time-Biller</h2>
-        {links.map(([to, label]) => (
-          <NavLink key={to} to={to} end={to === "/"}
-            style={({ isActive }) => ({ display: "block", padding: "8px 0",
-              color: isActive ? "#60a5fa" : "#e5e7eb", textDecoration: "none" })}>
-            {label}
-          </NavLink>
-        ))}
-      </nav>
-      <main style={{ flex: 1, padding: 24 }}><Outlet /></main>
+    <div className="app">
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand__mark">
+            <IconStopwatch />
+          </span>
+          <span className="brand__name">
+            Time-Biller
+            <small>bill by the hour</small>
+          </span>
+        </div>
+        <nav className="nav">
+          {links.map(({ to, label, Icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) => "nav__link" + (isActive ? " is-active" : "")}
+            >
+              <Icon />
+              <span>{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+        <div className="sidebar__foot">Local · single-user</div>
+      </aside>
+      <main className="content">
+        <div className="content__inner">
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 }
