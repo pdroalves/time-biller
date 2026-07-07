@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import models  # noqa: F401
+from . import __version__, models  # noqa: F401
 from .db import Base, engine
 
 
@@ -14,7 +14,7 @@ def create_app() -> FastAPI:
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
-        return {"status": "ok"}
+        return {"status": "ok", "version": __version__}
 
     from .routers import settings as settings_router
     app.include_router(settings_router.router)
