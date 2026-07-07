@@ -52,8 +52,12 @@ can drive the timer straight from the system tray (AppIndicator).
   only if you want the system-tray control):
 
   ```bash
-  sudo apt-get install -y gir1.2-appindicator3-0.1 python3-gi
+  sudo apt-get install -y python3-gi gir1.2-ayatanaappindicator3-0.1
   ```
+
+  (On older systems the package may instead be `gir1.2-appindicator3-0.1`; the
+  tray supports both.) On GNOME you also need the **AppIndicator and
+  KStatusNotifierItem Support** extension, which ships with Ubuntu.
 
 ## Deploy as a container (recommended)
 
@@ -84,6 +88,35 @@ it on the host first (`docker build -t time-biller:latest .`) or push it to a
 registry the host can reach. The container listens on port **8765** and stores
 its SQLite database in the `time-biller-data` volume at `/data/time_biller.db`
 (overridable via the `TIME_BILLER_DB` env var).
+
+## Control from the Ubuntu tray
+
+The tray is a small local GTK AppIndicator (`desktop/tray.py`) that talks to the
+API over HTTP, so it works against a **containerized deployment** too — it just
+needs to know where the server lives. Point it at your deployment with the
+`TIME_BILLER_URL` environment variable (defaults to `http://127.0.0.1:8765`):
+
+```bash
+sudo apt-get install -y python3-gi gir1.2-ayatanaappindicator3-0.1
+TIME_BILLER_URL=http://<host>:8765 python3 desktop/tray.py
+```
+
+A clock icon appears in the top bar. Its menu shows each running/paused timer
+with live elapsed time and Pause/Resume/Stop, a **Quick start** client → project
+submenu, **Open app** (opens the web UI), and **Quit tray**.
+
+To start it automatically on login, add an autostart entry (adjust the URL and
+path) at `~/.config/autostart/time-biller-tray.desktop`:
+
+```ini
+[Desktop Entry]
+Type=Application
+Name=Time-Biller Tray
+Exec=env TIME_BILLER_URL=http://<host>:8765 /usr/bin/python3 /path/to/time-biller/desktop/tray.py
+Icon=clock
+Terminal=false
+X-GNOME-Autostart-enabled=true
+```
 
 ## Running as a desktop app (optional)
 

@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.request
 
-BASE = "http://127.0.0.1:8765/api"
+# Where the Time-Biller server lives. Point this at your deployment, e.g.
+#   TIME_BILLER_URL=http://192.168.4.17:8765
+ROOT_URL = os.environ.get("TIME_BILLER_URL", "http://127.0.0.1:8765").rstrip("/")
+BASE = ROOT_URL + "/api"
 
 
 def _req(method: str, path: str, body: dict | None = None):

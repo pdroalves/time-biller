@@ -3,8 +3,16 @@ from __future__ import annotations
 import gi
 
 gi.require_version("Gtk", "3.0")
-gi.require_version("AppIndicator3", "0.1")
-from gi.repository import AppIndicator3, GLib, Gtk  # noqa: E402
+# Prefer the modern Ayatana indicator (Ubuntu 20.04+), fall back to the
+# legacy libappindicator where only that is available.
+try:
+    gi.require_version("AyatanaAppIndicator3", "0.1")
+    from gi.repository import AyatanaAppIndicator3 as AppIndicator3  # noqa: E402
+except (ValueError, ImportError):
+    gi.require_version("AppIndicator3", "0.1")
+    from gi.repository import AppIndicator3  # noqa: E402
+
+from gi.repository import GLib, Gtk  # noqa: E402
 
 import tray_api as apiclient  # noqa: E402
 
@@ -60,7 +68,7 @@ class Tray:
 
         open_item = Gtk.MenuItem(label="Open app")
         open_item.connect("activate", lambda _:
-                          GLib.spawn_command_line_async("xdg-open http://127.0.0.1:8765/"))
+                          GLib.spawn_command_line_async(f"xdg-open {apiclient.ROOT_URL}/"))
         menu.append(open_item)
 
         quit_item = Gtk.MenuItem(label="Quit tray")
