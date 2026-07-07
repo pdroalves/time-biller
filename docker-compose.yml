@@ -1,0 +1,14 @@
+services:
+  time-biller:
+    image: time-biller:latest
+    container_name: time-biller
+    restart: unless-stopped
+    environment:
+      TIME_BILLER_DB: /data/time_biller.db
+    volumes:
+      - time-biller-data:/data
+    ports:
+      - "8765:8765"
+
+volumes:
+  time-biller-data:

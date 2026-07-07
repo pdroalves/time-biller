@@ -55,10 +55,40 @@ can drive the timer straight from the system tray (AppIndicator).
   sudo apt-get install -y gir1.2-appindicator3-0.1 python3-gi
   ```
 
-## Running
+## Deploy as a container (recommended)
+
+The app ships as a single Docker image: a multi-stage build compiles the React
+frontend and then serves both the JSON API and the built SPA from one FastAPI
+process. Data is persisted in a `/data` volume.
+
+```bash
+# Build and run locally
+docker build -t time-biller:latest .
+docker run -d --name time-biller -p 8765:8765 \
+  -v time-biller-data:/data time-biller:latest
+# open http://localhost:8765
+```
+
+Or with Compose (see `docker-compose.yml`):
+
+```bash
+docker compose up -d
+```
+
+### Portainer
+
+`docker-compose.yml` works as a Portainer **stack**. Either paste its contents
+into a new stack (Stacks → Add stack → Web editor), or point Portainer at this
+repo. The image `time-biller:latest` must be available on the Docker host — build
+it on the host first (`docker build -t time-biller:latest .`) or push it to a
+registry the host can reach. The container listens on port **8765** and stores
+its SQLite database in the `time-biller-data` volume at `/data/time_biller.db`
+(overridable via the `TIME_BILLER_DB` env var).
+
+## Running as a desktop app (optional)
 
 The convenience script builds the frontend, installs the backend (editable), and
-launches the desktop app:
+launches a native desktop window:
 
 ```bash
 bash run.sh

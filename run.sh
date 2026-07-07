@@ -30,5 +30,5 @@ else
 fi
 
 ( cd frontend && npm install && npm run build )
-( cd backend && "$PY" -m pip install -e ".[dev]" )
+( cd backend && "$PY" -m pip install -e ".[dev,desktop]" )
 "$PY" desktop/launcher.py
